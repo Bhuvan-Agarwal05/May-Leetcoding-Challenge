@@ -1,0 +1,70 @@
+class Solution {
+    public int[][] kClosest(int[][] points, int K) {
+        if(K==points.length)
+            return points;
+        
+        int[][] output = new int[K][2];
+        ArrayList<Integer> remaining = new ArrayList();
+        ArrayList l = new ArrayList();
+        int m = points.length;
+        
+        double min=0;
+     
+        // Calculating min distance of all points from (0,0) and adding it in a list
+        for(int i=0;i<m;i++)
+        {
+              remaining.add(i);
+              min = Math.sqrt(points[i][0]*points[i][0] + points[i][1]*points[i][1]);
+              l.add(min);
+        }
+        int flag=-1;
+        int g=0;
+        int low = 0;
+        int prev_low=0;
+        while(K!=0)
+        {
+            for(int i=0;i<l.size();i++)
+            {
+                if(remaining.contains(i))
+                {
+                    if( (double)l.get(i) <= (double)l.get(low) )
+                    {
+                        prev_low = low;
+                        low = i;
+                    }
+                  else if((double)l.get(i) < (double)l.get(prev_low))
+                      prev_low = i;
+                }
+            }
+           
+            if(K>=2 && prev_low!=low)
+            {  
+                output[g][0] = points[low][0];
+                output[g][1] = points[low][1];
+                g++;
+                output[g][0] = points[prev_low][0];
+                output[g][1] = points[prev_low][1];
+                flag=1;
+                remaining.remove(new Integer(low));
+                remaining.remove(new Integer(prev_low));
+                low = remaining.get(0);
+                prev_low = remaining.get(0);
+            }
+            else
+            {
+                output[g][0] = points[low][0];
+                output[g][1] = points[low][1];
+                flag=0;
+                remaining.remove(new Integer(low));
+                low = remaining.get(0);
+            }
+            
+            if(flag==1)
+                K -= 2;
+            else
+                K--;
+            g++;
+        }
+        return output; 
+    }
+}
